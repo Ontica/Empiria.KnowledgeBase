@@ -1,6 +1,6 @@
 ﻿/* Empiria Knowledge Base ************************************************************************************
 *                                                                                                            *
-*  Module   : Frequently asked questions                   Component : Domain services                       *
+*  Module   : Knowledge Base Entities                      Component : Domain services                       *
 *  Assembly : Empiria.KnowledgeBase.dll                    Pattern   : Domain class                          *
 *  Type     : Faq                                          License   : Please read LICENSE.txt file          *
 *                                                                                                            *
@@ -43,7 +43,7 @@ namespace Empiria.KnowledgeBase {
 
 
     static public FixedList<Faq> Search(string keywords = "") {
-      return FaqData.SearchFaq(keywords);
+      return KBItemsData.SearchFaq(keywords);
     }
 
 
@@ -151,7 +151,7 @@ namespace Empiria.KnowledgeBase {
         this.UID = EmpiriaString.BuildRandomString(6, 24);
         this.Owner = EmpiriaUser.Current.AsContact();
       }
-      FaqData.WriteFaq(this);
+      KBItemsData.WriteFaq(this);
     }
 
 

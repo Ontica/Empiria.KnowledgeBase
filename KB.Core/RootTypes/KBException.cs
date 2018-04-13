@@ -1,6 +1,6 @@
 ﻿/* Empiria Knowledge Base ************************************************************************************
 *                                                                                                            *
-*  Module   : Frequently asked questions                   Component : Domain services                       *
+*  Module   : Knowledge Base Entities                      Component : Domain services                       *
 *  Assembly : Empiria.KnowledgeBase.dll                    Pattern   : Exception type                        *
 *  Type     : KBException                                  License   : Please read LICENSE.txt file          *
 *                                                                                                            *
@@ -20,7 +20,7 @@ namespace Empiria.KnowledgeBase {
 
     }
 
-    static private string resourceBaseName = "Empiria.Kb.RootTypes.KBExceptionMsg";
+    static private string resourceBaseName = "Empiria.KB.RootTypes.KBExceptionMsg";
 
     #region Constructors and parsers
 
