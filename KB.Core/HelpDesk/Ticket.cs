@@ -18,19 +18,12 @@ namespace Empiria.HelpDesk {
 
   /// <summary>Handles information about a help desk ticket.</summary>
   [PartitionedType(typeof(TicketType))]
-  public class Ticket : BaseObject {
+  abstract public class Ticket : BaseObject {
 
     #region Constructors and parsers
 
     protected Ticket(TicketType powerType) : base(powerType) {
       // Required by Empiria Framework for all partitioned types.
-    }
-
-
-    public Ticket(JsonObject data) {
-      this.AssertIsValid(data);
-
-      this.Load(data);
     }
 
 
@@ -44,12 +37,13 @@ namespace Empiria.HelpDesk {
     }
 
 
-    static public FixedList<Ticket> Search(string keywords) {
-      return HelpDeskData.SearchTickets(keywords);
+    static public FixedList<T> Search<T>(string keywords) where T: Ticket {
+      return HelpDeskData.SearchTickets<T>(keywords);
     }
 
-    public static FixedList<Ticket> GetOpened(string keywords) {
-      return HelpDeskData.GetOpenedTickets(keywords);
+
+    static public FixedList<T> GetOpened<T>(string keywords) where T : Ticket {
+      return HelpDeskData.GetOpenedTickets<T>(keywords);
     }
 
     #endregion Constructors and parsers
@@ -91,7 +85,7 @@ namespace Empiria.HelpDesk {
     } = String.Empty;
 
 
-    [DataField("Title")]
+    [DataField("Title", Default = "No asignado")]
     public string Title {
       get;
       private set;
@@ -112,7 +106,8 @@ namespace Empiria.HelpDesk {
     } = String.Empty;
 
 
-    internal JsonObject ExtensionData {
+    [DataField("ExtData")]
+    protected internal JsonObject ExtensionData {
       get;
       private set;
     } = new JsonObject();
@@ -120,7 +115,8 @@ namespace Empiria.HelpDesk {
 
     internal string Keywords {
       get {
-        return EmpiriaString.BuildKeywords(this.ControlNo, this.Title, this.Tags, this.Description);
+        return EmpiriaString.BuildKeywords(this.ControlNo, this.Title,
+                                           this.Tags, this.Description);
       }
     }
 
@@ -130,6 +126,7 @@ namespace Empiria.HelpDesk {
       get;
       private set;
     }
+
 
     [DataField("AssignedToId")]
     public Contact AssignedTo {
@@ -145,7 +142,7 @@ namespace Empiria.HelpDesk {
     }
 
 
-    [DataField("Status", Default = ObjectStatus.Active)]
+    [DataField("Status", Default = ObjectStatus.Pending)]
     public ObjectStatus Status {
       get;
       private set;
@@ -163,72 +160,67 @@ namespace Empiria.HelpDesk {
       }
     }
 
-
-    //public FixedList<Topic> Topics {
-    //  get {
-    //    return new FixedList<Topic>();
-    //  }
-    //}
-
-
-    //public FixedList<Recommendation> Recommendations {
-    //  get {
-    //    return new FixedList<Topic>();
-    //  }
-    //}
-
-
-    //public FixedList<Agreement> Agreements {
-    //  get {
-    //    return new FixedList<Agreement>();
-    //  }
-    //}
-
     #endregion Public properties
 
     #region Public methods
 
+    public void Close() {
+      this.Status = ObjectStatus.Closed;
+      this.ResolutionTime = DateTime.Now;
+    }
+
+
     public void Delete() {
       this.Status = ObjectStatus.Deleted;
+    }
 
-      this.Save();
+
+    protected override void OnBeforeSave() {
+      if (this.IsNew) {
+        this.UID = EmpiriaString.BuildRandomString(6, 36);
+
+        if (this.Customer.IsEmptyInstance) {
+          this.Customer = Contact.Parse(51);
+        }
+
+        if (this.Provider.IsEmptyInstance) {
+          this.Provider = Contact.Parse(50);
+        }
+
+        this.ControlNo = HelpDeskData.GetNextControlNoForTicket(this.Provider);
+      }
     }
 
 
     protected override void OnSave() {
-      if (this.UID.Length == 0) {
-        this.UID = EmpiriaString.BuildRandomString(6, 36);
-        this.Customer = Contact.Parse(51);
-        this.Provider = Contact.Parse(50);
-      }
       HelpDeskData.WriteTicket(this);
     }
 
 
-    public void Update(JsonObject data) {
-      Assertion.AssertObject(data, "data");
-
+    public virtual void Update(JsonObject data) {
       this.AssertIsValid(data);
 
       this.Load(data);
-
-      this.Save();
     }
 
     #endregion Public methods
 
     #region Private methods
 
-    private void AssertIsValid(JsonObject data) {
+    protected virtual void AssertIsValid(JsonObject data) {
       Assertion.AssertObject(data, "data");
 
     }
 
+    protected virtual void Load(JsonObject data) {
+      this.Customer = data.Get<Contact>("customerUID", this.Customer);
+      this.Provider = data.Get<Contact>("providerUID", this.Provider);
+      this.AssignedTo = data.Get<Contact>("assignedToUID", this.AssignedTo);
 
-    private void Load(JsonObject data) {
-      this.ControlNo = data.Get<string>("controlNo", this.ControlNo);
-      this.Title = data.Get<string>("title", this.Title);
-      this.Description = data.Get<string>("description", this.Description);
+      this.Title = data.GetClean("title", this.Title);
+      this.Description = data.GetClean("description", this.Description);
+      this.Tags = data.GetClean("tags", this.Tags);
+
     }
 
     #endregion Private methods

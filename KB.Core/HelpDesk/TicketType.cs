@@ -9,6 +9,7 @@
 ************************* Copyright(c) La Vía Óntica SC, Ontica LLC and contributors. All rights reserved. **/
 using System;
 
+using Empiria.Json;
 using Empiria.Ontology;
 
 namespace Empiria.HelpDesk {
@@ -23,31 +24,42 @@ namespace Empiria.HelpDesk {
       // Empiria power types always have this constructor.
     }
 
-    static public new TicketType Parse(int typeId) {
+    static internal new TicketType Parse(int typeId) {
       return ObjectTypeInfo.Parse<TicketType>(typeId);
     }
 
 
-    static internal new TicketType Parse(string typeName) {
+    static public new TicketType Parse(string typeName) {
       return ObjectTypeInfo.Parse<TicketType>(typeName);
     }
 
 
     static public TicketType CustomerCall {
       get {
-        return TicketType.Parse("ObjectType.ServiceDeskTicket.CustomerCall");
+        return TicketType.Parse("ObjectType.HelpDeskTicket.CustomerCall");
       }
     }
 
 
     static public TicketType MeetingReport {
       get {
-        return TicketType.Parse("ObjectType.ServiceDeskTicket.MeetingReport");
+        return TicketType.Parse("ObjectType.HelpDeskTicket.MeetingReport");
       }
     }
 
-
     #endregion Constructors and parsers
+
+    #region Methods
+
+    public Ticket CreateInstance(JsonObject data) {
+      Ticket ticket = base.CreateObject<Ticket>();
+
+      ticket.Update(data);
+
+      return ticket;
+    }
+
+    #endregion Methods
 
   } // class TicketType
 
