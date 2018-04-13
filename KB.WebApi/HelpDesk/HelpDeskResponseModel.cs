@@ -34,23 +34,32 @@ namespace Empiria.HelpDesk.WebApi {
 
 
     static internal object ToResponse(this Ticket ticket) {
+      if (ticket is MeetingReport) {
+        return ToResponse((MeetingReport) ticket);
+      }
+
+      throw Assertion.AssertNoReachThisCode();
+    }
+
+    static internal object ToResponse(this MeetingReport meeting) {
       return new {
-        uid = ticket.UID,
-        type = ticket.TicketType.Name,
-        typeName = ticket.TicketType.DisplayName,
-        controlNo = ticket.ControlNo,
-        title = ticket.Title,
-        description = ticket.Description,
-        requestedTime = ticket.RequestedTime,
-        assignedTo = ticket.AssignedTo.Alias,
-        resolutionTime = ticket.ResolutionTime,
-        customerName = ticket.Customer.Alias,
-        location = "Mexico City Office",
-        date = DateTime.Today.AddDays(-10),
-        startTime = "13:45",
-        endTime = "15:30",
-        status = ticket.Status,
-        participants = ticket.Participants.ToResponse(),
+        uid = meeting.UID,
+        type = meeting.TicketType.Name,
+        typeName = meeting.TicketType.DisplayName,
+        controlNo = meeting.ControlNo,
+        title = meeting.Title,
+        description = meeting.Description,
+        requestedTime = meeting.RequestedTime,
+        assignedTo = meeting.AssignedTo.Alias,
+        customerName = meeting.Customer.Alias,
+        location = meeting.Location,
+        date = meeting.Date,
+        startTime = meeting.StartTime,
+        endTime = meeting.EndTime,
+        resolutionTime = meeting.ResolutionTime,
+        status = meeting.Status,
+
+        participants = meeting.Participants.ToResponse(),
         topics = new[] { new { uid = "sdkfgb345", name = "ASEA" }, new { uid = "nm23511", name = "Pozo XASD-3" } },
         recommendations = new Faq[2] { Faq.Parse("jkldfvg3JJ452"), Faq.Parse("jkldfvg3JJ452") }.ToResponse(),
         agreements = new string[0]
@@ -72,6 +81,6 @@ namespace Empiria.HelpDesk.WebApi {
       return array;
     }
 
-  }  // class ServiceDeskResponseModel
+  }  // class HelpDeskResponseModel
 
 }  // namespace Empiria.HelpDesk.WebApi

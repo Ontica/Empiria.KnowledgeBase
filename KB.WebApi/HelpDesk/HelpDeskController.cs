@@ -27,7 +27,7 @@ namespace Empiria.HelpDesk.WebApi {
         var ticket = Ticket.Parse(ticketUID);
 
         return new SingleObjectModel(this.Request, ticket.ToResponse(),
-                                    typeof(Ticket).FullName);
+                                     typeof(Ticket).FullName);
 
       } catch (Exception e) {
         throw base.CreateHttpException(e);
@@ -40,7 +40,7 @@ namespace Empiria.HelpDesk.WebApi {
     public CollectionModel GetOpenedTickets([FromUri] string keywords = "") {
       try {
 
-        FixedList<Ticket> ticketsList = Ticket.GetOpened(keywords);
+        FixedList<Ticket> ticketsList = Ticket.GetOpened<Ticket>(keywords);
 
         return new CollectionModel(this.Request, ticketsList.ToResponse(),
                                    typeof(Ticket).FullName);
@@ -56,7 +56,7 @@ namespace Empiria.HelpDesk.WebApi {
     public CollectionModel SearchTickets([FromUri] string keywords = "") {
       try {
 
-        FixedList<Ticket> ticketsList= Ticket.Search(keywords);
+        FixedList<Ticket> ticketsList= Ticket.Search<Ticket>(keywords);
 
         return new CollectionModel(this.Request, ticketsList.ToResponse(),
                                    typeof(Ticket).FullName);
@@ -78,7 +78,29 @@ namespace Empiria.HelpDesk.WebApi {
 
         var bodyAsJson = JsonObject.Parse(body);
 
-        var ticket = new Ticket(bodyAsJson);
+        var ticketType = TicketType.Parse(bodyAsJson.Get<string>("type"));
+
+        Ticket ticket = ticketType.CreateInstance(bodyAsJson);
+
+        ticket.Save();
+
+        return new SingleObjectModel(this.Request, ticket.ToResponse(),
+                                     typeof(Ticket).FullName);
+
+      } catch (Exception e) {
+        throw base.CreateHttpException(e);
+      }
+    }
+
+
+    [HttpPost]
+    [Route("v1/help-desk/tickets/{ticketUID}/close")]
+    public SingleObjectModel CloseTicket(string ticketUID) {
+      try {
+
+        var ticket = Ticket.Parse(ticketUID);
+
+        ticket.Close();
 
         ticket.Save();
 
@@ -122,6 +144,8 @@ namespace Empiria.HelpDesk.WebApi {
         var ticket = Ticket.Parse(ticketUID);
 
         ticket.Delete();
+
+        ticket.Save();
 
         return new NoDataModel(this.Request);
 
