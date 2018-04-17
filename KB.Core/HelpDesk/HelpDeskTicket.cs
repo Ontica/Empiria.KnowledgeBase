@@ -2,9 +2,9 @@
 *                                                                                                            *
 *  Module   : Help Desk                                    Component : Domain services                       *
 *  Assembly : Empiria.KnowledgeBase.dll                    Pattern   : Partitioned type                      *
-*  Type     : Ticket                                       License   : Please read LICENSE.txt file          *
+*  Type     : HelpDeskTicket                               License   : Please read LICENSE.txt file          *
 *                                                                                                            *
-*  Summary  : Handles information about a help desk ticket.                                                  *
+*  Summary  : Abstract classs that handles information about a help desk ticket.                             *
 *                                                                                                            *
 ************************* Copyright(c) La Vía Óntica SC, Ontica LLC and contributors. All rights reserved. **/
 using System;
@@ -16,33 +16,33 @@ using Empiria.Ontology;
 
 namespace Empiria.HelpDesk {
 
-  /// <summary>Handles information about a help desk ticket.</summary>
+  /// <summary>Abstract classs that handles information about a help desk ticket.</summary>
   [PartitionedType(typeof(TicketType))]
-  abstract public class Ticket : BaseObject {
+  abstract public class HelpDeskTicket : BaseObject {
 
     #region Constructors and parsers
 
-    protected Ticket(TicketType powerType) : base(powerType) {
+    protected HelpDeskTicket(TicketType powerType) : base(powerType) {
       // Required by Empiria Framework for all partitioned types.
     }
 
 
-    static internal Ticket Parse(int id) {
-      return BaseObject.ParseId<Ticket>(id);
+    static internal HelpDeskTicket Parse(int id) {
+      return BaseObject.ParseId<HelpDeskTicket>(id);
     }
 
 
-    static public Ticket Parse(string uid) {
-      return BaseObject.ParseKey<Ticket>(uid);
+    static public HelpDeskTicket Parse(string uid) {
+      return BaseObject.ParseKey<HelpDeskTicket>(uid);
     }
 
 
-    static public FixedList<T> Search<T>(string keywords) where T: Ticket {
+    static public FixedList<T> Search<T>(string keywords) where T: HelpDeskTicket {
       return HelpDeskData.SearchTickets<T>(keywords);
     }
 
 
-    static public FixedList<T> GetOpened<T>(string keywords) where T : Ticket {
+    static public FixedList<T> GetOpened<T>(string keywords) where T : HelpDeskTicket {
       return HelpDeskData.GetOpenedTickets<T>(keywords);
     }
 
@@ -225,6 +225,6 @@ namespace Empiria.HelpDesk {
 
     #endregion Private methods
 
-  }  // class Ticket
+  }  // class HelpDeskTicket
 
 }  // namespace Empiria.HelpDesk

@@ -17,14 +17,14 @@ namespace Empiria.HelpDesk {
   static internal class HelpDeskData {
 
 
-    static internal FixedList<T> GetOpenedTickets<T>(string keywords) where T : Ticket {
+    static internal FixedList<T> GetOpenedTickets<T>(string keywords) where T : HelpDeskTicket {
       string filter = GetTicketsFilter(keywords, "Status = 'P'");
 
       return BaseObject.GetList<T>(filter, "RequestedTime")
                        .ToFixedList();
     }
 
-    static internal FixedList<T> SearchTickets<T>(string keywords) where T: Ticket {
+    static internal FixedList<T> SearchTickets<T>(string keywords) where T: HelpDeskTicket {
       string filter = GetTicketsFilter(keywords);
 
       return BaseObject.GetList<T>(filter, "RequestedTime")
@@ -32,7 +32,7 @@ namespace Empiria.HelpDesk {
     }
 
 
-    static internal void WriteTicket(Ticket o) {
+    static internal void WriteTicket(HelpDeskTicket o) {
       var op = DataOperation.Parse("writeKBHelpDeskTicket",
                                     o.Id, o.TicketType.Id, o.UID,
                                     o.Customer.Id, o.Provider.Id, o.ControlNo,

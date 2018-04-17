@@ -15,7 +15,7 @@ using Empiria.Ontology;
 namespace Empiria.HelpDesk {
 
   /// <summary>Power type used to describe a help desk ticket.</summary>
-  [Powertype(typeof(Ticket))]
+  [Powertype(typeof(HelpDeskTicket))]
   public class TicketType : Powertype {
 
     #region Constructors and parsers
@@ -34,25 +34,12 @@ namespace Empiria.HelpDesk {
     }
 
 
-    static public TicketType CustomerCall {
-      get {
-        return TicketType.Parse("ObjectType.HelpDeskTicket.CustomerCall");
-      }
-    }
-
-
-    static public TicketType MeetingReport {
-      get {
-        return TicketType.Parse("ObjectType.HelpDeskTicket.MeetingReport");
-      }
-    }
-
     #endregion Constructors and parsers
 
     #region Methods
 
-    public Ticket CreateInstance(JsonObject data) {
-      Ticket ticket = base.CreateObject<Ticket>();
+    public HelpDeskTicket CreateInstance(JsonObject data) {
+      HelpDeskTicket ticket = base.CreateObject<HelpDeskTicket>();
 
       ticket.Update(data);
 
