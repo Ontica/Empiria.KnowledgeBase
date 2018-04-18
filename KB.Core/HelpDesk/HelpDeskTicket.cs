@@ -11,6 +11,7 @@ using System;
 
 using Empiria.Json;
 using Empiria.Contacts;
+using Empiria.StateEnums;
 
 using Empiria.Ontology;
 
@@ -142,8 +143,8 @@ namespace Empiria.HelpDesk {
     }
 
 
-    [DataField("Status", Default = ObjectStatus.Pending)]
-    public ObjectStatus Status {
+    [DataField("Status", Default = ActivityStatus.Pending)]
+    public ActivityStatus Status {
       get;
       private set;
     }
@@ -165,13 +166,13 @@ namespace Empiria.HelpDesk {
     #region Public methods
 
     public void Close() {
-      this.Status = ObjectStatus.Closed;
+      this.Status = ActivityStatus.Completed;
       this.ResolutionTime = DateTime.Now;
     }
 
 
     public void Delete() {
-      this.Status = ObjectStatus.Deleted;
+      this.Status = ActivityStatus.Deleted;
     }
 
 

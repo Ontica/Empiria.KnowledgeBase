@@ -12,6 +12,7 @@ using System;
 using Empiria.Json;
 using Empiria.Contacts;
 using Empiria.Security;
+using Empiria.StateEnums;
 
 namespace Empiria.KnowledgeBase {
 
@@ -129,8 +130,8 @@ namespace Empiria.KnowledgeBase {
     }
 
 
-    [DataField("Status", Default = ObjectStatus.Active)]
-    public ObjectStatus Status {
+    [DataField("Status", Default = EntityStatus.Active)]
+    public EntityStatus Status {
       get;
       private set;
     }
@@ -140,7 +141,7 @@ namespace Empiria.KnowledgeBase {
     #region Public methods
 
     public void Delete() {
-      this.Status = ObjectStatus.Deleted;
+      this.Status = EntityStatus.Deleted;
 
       this.Save();
     }
@@ -178,7 +179,7 @@ namespace Empiria.KnowledgeBase {
       this.Answer = data.Get<string>("answer", this.Answer);
       this.Comments = data.Get<string>("comments", this.Comments);
       this.AccessMode = data.Get<AccessMode>("accessMode", this.AccessMode);
-      this.Status = data.Get<ObjectStatus>("status", this.Status);
+      this.Status = data.Get<EntityStatus>("status", this.Status);
     }
 
     #endregion Private methods
