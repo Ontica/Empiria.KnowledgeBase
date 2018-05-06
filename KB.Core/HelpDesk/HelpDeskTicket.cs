@@ -57,14 +57,6 @@ namespace Empiria.HelpDesk {
       }
     }
 
-
-    [DataField("UID")]
-    public string UID {
-      get;
-      private set;
-    } = String.Empty;
-
-
     [DataField("CustomerId")]
     public Contact Customer {
       get;
@@ -175,10 +167,8 @@ namespace Empiria.HelpDesk {
       this.Status = ActivityStatus.Deleted;
     }
 
-
-    protected override void OnBeforeSave() {
+    protected override void OnSave() {
       if (this.IsNew) {
-        this.UID = EmpiriaString.BuildRandomString(6, 36);
 
         if (this.Customer.IsEmptyInstance) {
           this.Customer = Contact.Parse(51);
@@ -190,10 +180,7 @@ namespace Empiria.HelpDesk {
 
         this.ControlNo = HelpDeskData.GetNextControlNoForTicket(this.Provider);
       }
-    }
 
-
-    protected override void OnSave() {
       HelpDeskData.WriteTicket(this);
     }
 

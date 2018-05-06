@@ -52,13 +52,6 @@ namespace Empiria.KnowledgeBase {
 
     #region Public properties
 
-    [DataField("UID")]
-    public string UID {
-      get;
-      private set;
-    } = String.Empty;
-
-
     [DataField("ControlNo")]
     public string ControlNo {
       get;
@@ -148,8 +141,7 @@ namespace Empiria.KnowledgeBase {
 
 
     protected override void OnSave() {
-      if (this.UID.Length == 0) {
-        this.UID = EmpiriaString.BuildRandomString(6, 24);
+      if (this.IsNew) {
         this.Owner = EmpiriaUser.Current.AsContact();
       }
       KBItemsData.WriteFaq(this);
