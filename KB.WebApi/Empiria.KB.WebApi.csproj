@@ -54,15 +54,14 @@
     <WarningsAsErrors />
   </PropertyGroup>
   <ItemGroup>
-    <ProjectReference Include="..\KB.Core\Empiria.KB.csproj" />
-  </ItemGroup>
-  <ItemGroup>
     <Reference Include="System.Net.Http" />
   </ItemGroup>
   <ItemGroup Condition=" '$(Configuration)' != 'Multisolutions' ">
+    <PackageReference Include="Empiria.KnowledgeBase" Version="1.0.0" />
     <PackageReference Include="Empiria.WebApi" Version="2.0.0" />
   </ItemGroup>
   <ItemGroup Condition=" '$(Configuration)' == 'Multisolutions' ">
+    <ProjectReference Include="..\KB.Core\Empiria.KB.csproj" />
     <ProjectReference Include="..\..\extensions\WebApi\Empiria.WebApi.csproj" />
   </ItemGroup>
 </Project>
